@@ -1,13 +1,69 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* 入力欄 */
+.input-area {
+  width: 540px;
+  margin: 20px auto;
+  display: flex;
+}
+.input-area input {
+  width: 300px;
+  height: 30px;
+  padding: 0;
+  margin: 0;
+  margin-right: 20px;
+}
+.input-area button {
+  width: 100px;
+  height: 30px;
+}
+.input-area select {
+  width: 100px;
+  height: 30px;
+  text-align: center;
+  margin-left: 20px;
+}
+
+/* TODOリスト */
+ul {
+  list-style-type: none;
+  width: 700px;
+  margin: 0 auto;
+  padding: 0;
+}
+li {
+  margin: 10px;
+  padding: 0;
+  display: flex;
+}
+li span {
+  margin-right: 20px;
+  width: 500px;
+  display: block;
+}
+li select {
+  width: 100px;
+  height: 30px;
+  text-align: center;
+  margin-right: 20px;
+}
+li button {
+  width: 100px;
+  height: 30px;
 }

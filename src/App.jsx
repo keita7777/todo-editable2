@@ -1,28 +1,19 @@
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import React, { useEffect, useState } from "react";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  onSnapshot,
-  updateDoc,
-} from "firebase/firestore";
-import { db } from "./firebase";
-import "./index.css";
 
 const App = () => {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState([
+    { id: 1, title: "買い物に行く", status: "done" },
+    { id: 2, title: "子どものお迎え", status: "notStarted" },
+    { id: 3, title: "企画書の提出", status: "inProgress" },
+  ]);
   const [todoTitle, setTodoTitle] = useState("");
-  // const [todoId, setTodoId] = useState(todos.length + 1);
+  const [todoId, setTodoId] = useState(todos.length + 1);
   const [isEditable, setIsEditable] = useState(false);
   const [editId, setEditId] = useState("");
   const [newTitle, setNewTitle] = useState("");
   const [filter, setFilter] = useState("notStarted");
   const [filteredTodos, setFilteredTodos] = useState([]);
-
-  const [todoList, setTodoList] = useState([]);
 
   const handleAddFormChanges = (e) => {
     setTodoTitle(e.target.value);
@@ -32,23 +23,17 @@ const App = () => {
     setTodoTitle("");
   };
 
-  const handleAddTodo = async () => {
-    await addDoc(collection(db, "todos"), {
-      id: crypto.randomUUID(),
-      title: todoTitle,
-      status: "notStarted",
-    });
-    const data = await getDocs(collection(db, "todos"));
-    setTodoList(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    // setTodoId(todoId + 1);
+  const handleAddTodo = () => {
+    setTodos([
+      ...todos,
+      { id: todoId, title: todoTitle, status: "notStarted" },
+    ]);
+    setTodoId(todoId + 1);
     resetFormInput();
   };
 
-  const handleDeleteTodo = async (id) => {
-    await deleteDoc(doc(db, "todos", id));
-    const data = await getDocs(collection(db, "todos"));
-    setTodoList(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    // setTodoList(todoList.filter((todo) => todo !== targetTodo));
+  const handleDeleteTodo = (targetTodo) => {
+    setTodos(todos.filter((todo) => todo !== targetTodo));
   };
 
   const handleOpenEditForm = (todo) => {
@@ -66,65 +51,47 @@ const App = () => {
     setEditId("");
   };
 
-  const handleEditTodo = async (id) => {
-    const newArray = todoList.map((todo) =>
+  const handleEditTodo = () => {
+    const newArray = todos.map((todo) =>
       todo.id === editId ? { ...todo, title: newTitle } : todo
     );
-
-    await updateDoc(doc(db, "todos", editId), {
-      title: newTitle,
-    });
-
-    setTodoList(newArray);
+    setTodos(newArray);
     setNewTitle("");
     setEditId();
     handleCloseEditForm();
   };
 
   const handleStatusChange = (targetTodo, e) => {
-    const newArray = todoList.map((todo) =>
+    const newArray = todos.map((todo) =>
       todo.id === targetTodo.id ? { ...todo, status: e.target.value } : todo
     );
-    setTodoList(newArray);
+    setTodos(newArray);
   };
-
-  useEffect(() => {
-    const getTodos = async () => {
-      const data = await getDocs(collection(db, "todos"));
-      setTodoList(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    };
-    getTodos();
-    console.log("success");
-  }, []);
 
   useEffect(() => {
     const filteringTodos = () => {
       switch (filter) {
         case "notStarted":
           setFilteredTodos(
-            todoList.filter((todo) => todo.status === "notStarted")
+            todos.filter((todo) => todo.status === "notStarted")
           );
           break;
-        case "inProgress":
-          setFilteredTodos(
-            todoList.filter((todo) => todo.status === "inProgress")
-          );
-          break;
-        case "done":
-          setFilteredTodos(todoList.filter((todo) => todo.status === "done"));
-          break;
+        // 問題1. 絞り込みの処理を書こう
+
+        // ここまで
         default:
-          setFilteredTodos(todoList);
+          setFilteredTodos(todos);
       }
     };
-    filteringTodos();
-    console.log("success");
-  }, [filter, todoList]);
+    // 問題2. filteringTodosを呼び出そう
+
+    // ここまで
+  }, [filter, todos]);
 
   return (
     <>
       {isEditable ? (
-        <div className="input-area">
+        <div>
           <input
             type="text"
             label="新しいタイトル"
@@ -135,7 +102,7 @@ const App = () => {
           <button onClick={handleCloseEditForm}>キャンセル</button>
         </div>
       ) : (
-        <div className="input-area">
+        <div>
           <input
             type="text"
             label="タイトル"
@@ -153,7 +120,8 @@ const App = () => {
       )}
 
       <ul>
-        {filteredTodos.map((todo) => (
+        {/* 問題3. 絞り込んだtodoを一覧に渡そう*/}
+        {todos.map((todo) => (
           <li key={todo.id}>
             <span>{todo.title}</span>
             <select
@@ -165,9 +133,10 @@ const App = () => {
               <option value="done">完了</option>
             </select>
             <button onClick={() => handleOpenEditForm(todo)}>編集</button>
-            <button onClick={() => handleDeleteTodo(todo.id)}>削除</button>
+            <button onClick={() => handleDeleteTodo(todo)}>削除</button>
           </li>
         ))}
+        {/* ここまで */}
       </ul>
     </>
   );
