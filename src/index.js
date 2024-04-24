@@ -81,10 +81,13 @@ const App = () => {
     handleCloseEditForm();
   };
 
-  const handleStatusChange = (targetTodo, e) => {
+  const handleStatusChange = async (targetTodo, e) => {
     const newArray = todoList.map((todo) =>
       todo.id === targetTodo.id ? { ...todo, status: e.target.value } : todo
     );
+    await updateDoc(doc(db, "todos", targetTodo.id), {
+      status: e.target.value,
+    });
     setTodoList(newArray);
   };
 
